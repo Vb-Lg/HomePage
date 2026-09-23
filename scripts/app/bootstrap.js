@@ -1,6 +1,6 @@
 /*
 页面启动逻辑。
-负责解除预加载状态、更新页脚年份并启动樱花背景。
+负责解除预加载状态、更新页脚年份、获取一言并启动樱花背景。
 */
 (function (window, document) {
 	"use strict";
@@ -8,6 +8,7 @@
 	var namespace = (window.PersonalSakuraGuide = window.PersonalSakuraGuide || {});
 	var activeRenderer = null;
 	var preloadDelay = 100;
+	var hitokotoEndpoint = "https://international.v1.hitokoto.cn/?encode=json";
 
 	function initializeRenderer() {
 		if (typeof namespace.createSakuraRenderer !== "function") {
@@ -37,8 +38,42 @@
 		yearNode.textContent = String(new Date().getFullYear());
 	}
 
+	function loadHitokoto() {
+		var taglineNode = document.querySelector(".hero__tagline");
+
+		if (!taglineNode || typeof window.fetch !== "function") {
+			return;
+		}
+
+		window.fetch(hitokotoEndpoint, {
+			method: "GET",
+			cache: "no-store",
+			headers: {
+				Accept: "application/json"
+			}
+		})
+			.then(function (response) {
+				if (!response.ok) {
+					throw new Error("Hitokoto request failed: " + response.status);
+				}
+
+				return response.json();
+			})
+			.then(function (data) {
+				if (data && typeof data.hitokoto === "string" && data.hitokoto.trim()) {
+					taglineNode.textContent = data.hitokoto.trim();
+				}
+			})
+			.catch(function (error) {
+				if (window.console && typeof window.console.warn === "function") {
+					window.console.warn("无法获取一言内容。", error);
+				}
+			});
+	}
+
 	function bootstrap() {
 		updateCurrentYear();
+		loadHitokoto();
 		initializeRenderer();
 	}
 
