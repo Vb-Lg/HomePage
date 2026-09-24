@@ -7,6 +7,7 @@
 
 	var namespace = (window.PersonalSakuraGuide = window.PersonalSakuraGuide || {});
 	var activeRenderer = null;
+	var introDuration = 1300; /* --duration-intro(0.75s) + 过渡延迟(0.25s) + 收尾余量 */
 	var preloadDelay = 100;
 	var hitokotoEndpoints = [
 		"https://v1.hitokoto.cn/?encode=json",
@@ -28,7 +29,18 @@
 	function removePreloadState() {
 		window.setTimeout(function () {
 			document.body.classList.remove("is-preload");
+			scheduleIntroEnd();
 		}, preloadDelay);
+	}
+
+	/*
+	展开动画跑完之后撤掉 is-intro，把过渡交还给滚动折叠，
+	否则 .hero__content-inner 上的过渡会拖慢 --fold 的跟随。
+	*/
+	function scheduleIntroEnd() {
+		window.setTimeout(function () {
+			document.body.classList.remove("is-intro");
+		}, introDuration);
 	}
 
 	function updateCurrentYear() {
@@ -67,6 +79,10 @@
 				}
 
 				taglineNode.textContent = data.hitokoto.trim();
+
+				if (typeof window.CustomEvent === "function") {
+					document.dispatchEvent(new window.CustomEvent("app:taglinechange"));
+				}
 			})
 			.catch(function (error) {
 				return requestHitokoto(endpointIndex + 1, taglineNode).catch(function (fallbackError) {

@@ -19,11 +19,11 @@
 			<link rel="stylesheet" href="styles/utilities/noscript.css" />
 		</noscript>
 	</head>
-	<body class="is-preload">
+	<body class="is-preload is-intro">
 		<canvas id="sakura" class="sakura-canvas" aria-hidden="true"></canvas>
 
 		<div class="page-shell">
-			<main class="hero" aria-labelledby="site-title">
+			<header class="hero" aria-labelledby="site-title">
 				<div class="hero__section hero__avatar-section">
 					<div class="hero__avatar-frame">
 						<img
@@ -112,6 +112,103 @@
 						</li>
 					</ul>
 				</nav>
+			</header>
+
+			<main class="page-content" id="content">
+				<!-- TODO: 这里的文案与卡片都是占位内容，按需替换即可。 -->
+				<section class="content-section" aria-labelledby="about-title">
+					<h2 class="content-section__title" id="about-title">关于</h2>
+					<p class="content-section__text">
+						欢迎来到 VbLg。这里是我自己维护的一小块地方：博客、邮箱、判题、网盘、Git、云端编辑器和运行状态都跑在自己的服务器上，
+						上面的入口可以直接过去。
+					</p>
+					<p class="content-section__text">
+						喜欢折腾系统与网络，也写一点前端。如果站点出了什么问题，欢迎从下面的联系方式找我。
+					</p>
+				</section>
+
+				<section class="content-section" aria-labelledby="services-title">
+					<h2 class="content-section__title" id="services-title">服务</h2>
+					<ul class="link-grid">
+						<li class="link-grid__item">
+							<a
+								class="link-grid__link"
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://blog.vblg.top"
+							>
+								<span class="link-grid__name">Blog</span>
+								<span class="link-grid__desc">技术笔记与随笔</span>
+							</a>
+						</li>
+						<li class="link-grid__item">
+							<a
+								class="link-grid__link"
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://mail.vblg.top"
+							>
+								<span class="link-grid__name">Mail</span>
+								<span class="link-grid__desc">自有域名邮箱</span>
+							</a>
+						</li>
+						<li class="link-grid__item">
+							<a
+								class="link-grid__link"
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://oj.vblg.top"
+							>
+								<span class="link-grid__name">OJ</span>
+								<span class="link-grid__desc">在线判题系统</span>
+							</a>
+						</li>
+						<li class="link-grid__item">
+							<a
+								class="link-grid__link"
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://disk.vblg.top"
+							>
+								<span class="link-grid__name">网盘</span>
+								<span class="link-grid__desc">私有文件存储</span>
+							</a>
+						</li>
+						<li class="link-grid__item">
+							<a
+								class="link-grid__link"
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://git.vblg.top"
+							>
+								<span class="link-grid__name">Git</span>
+								<span class="link-grid__desc">代码仓库</span>
+							</a>
+						</li>
+						<li class="link-grid__item">
+							<a
+								class="link-grid__link"
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://code.vblg.top"
+							>
+								<span class="link-grid__name">VScode</span>
+								<span class="link-grid__desc">浏览器里的编辑器</span>
+							</a>
+						</li>
+						<li class="link-grid__item">
+							<a
+								class="link-grid__link"
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://status.vblg.top"
+							>
+								<span class="link-grid__name">运行状态</span>
+								<span class="link-grid__desc">服务可用性监控</span>
+							</a>
+						</li>
+					</ul>
+				</section>
 			</main>
 
 			<footer class="site-footer">
@@ -200,5 +297,6 @@
 		<script src="scripts/effects/sakura/gl-utils.js"></script>
 		<script src="scripts/effects/sakura/renderer.js"></script>
 		<script src="scripts/app/bootstrap.js"></script>
+		<script src="scripts/app/hero-fold.js"></script>
 	</body>
 </html>

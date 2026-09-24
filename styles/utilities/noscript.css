@@ -21,6 +21,12 @@ body.is-preload .hero__content-inner {
 	padding: 3rem 2rem;
 }
 
+/* 折叠进度由脚本写入，禁用脚本时要保证内容区照常显示 */
+.page-content {
+	opacity: 1;
+	transform: none;
+}
+
 body.is-preload .site-footer {
 	opacity: 1;
 }
