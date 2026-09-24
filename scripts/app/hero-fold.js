@@ -1,11 +1,9 @@
 /*
 首屏滚动折叠控制器。
-负责把滚动进度写进 --fold（0 = 展开的首屏，1 = 收起的透明页眉），
+负责把折叠进度写进 --fold（0 = 展开的首屏，1 = 收起的透明页眉），
 并实测折叠态的几何信息，交给 styles/pages/home.css 里的 calc() 就地插值。
 
-驱动方式写在 <body data-fold-mode="..."> 上，两种对比页面各用一份：
-	progress（默认）—— 折叠进度连续跟随滚动（index1.html）；
-	once            —— 越过阈值后播放一次折叠动画，往上滚时再展开（index2.html）。
+折叠方式：向下滚过阈值后播放一次收起动画，往上滚回阈值以下再展开。
 */
 (function (window, document) {
 	"use strict";
@@ -23,8 +21,6 @@
 		return;
 	}
 
-	var MODE_PROGRESS = "progress";
-	var MODE_ONCE = "once";
 	var MEASURE_CLASS = "is-measuring";
 	var FOLDED_CLASS = "is-folded";
 	var OFFSET_VARIABLES = [
@@ -36,11 +32,10 @@
 	];
 	var MEASURE_DELAY = 160;
 	var INTRO_TIMEOUT = 4000;
-	var ONCE_DURATION = 600;
-	var ONCE_HYSTERESIS = 0.12;
-	var ONCE_TRIGGER = 0.5;
+	var FOLD_DURATION = 600;
+	var FOLD_HYSTERESIS = 0.12;
+	var FOLD_TRIGGER = 0.5;
 
-	var mode = (body.getAttribute("data-fold-mode") || "").trim() === MODE_ONCE ? MODE_ONCE : MODE_PROGRESS;
 	var motionQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
 	var active = false;
 	var currentFold = 0;
@@ -182,15 +177,15 @@
 	}
 
 	/*
-	B 方案首次激活时直接落到当前滚动位置对应的状态，
+	首次激活时直接落到当前滚动位置对应的状态，
 	否则刷新在页面中部时会从展开态重放一次折叠动画。
 	*/
 	function primeFold() {
-		if (mode !== MODE_ONCE || tweenFrame) {
+		if (tweenFrame) {
 			return;
 		}
 
-		targetFold = getProgress() >= ONCE_TRIGGER ? 1 : 0;
+		targetFold = getProgress() >= FOLD_TRIGGER ? 1 : 0;
 		applyFold(targetFold);
 	}
 
@@ -207,6 +202,7 @@
 		scrollRange = span > 1 ? span : Math.max(1, window.innerHeight * 0.75);
 	}
 
+	/* 阈值判定带一点回滞，避免停在临界点附近时来回抖动 */
 	function syncFold() {
 		if (!active) {
 			return;
@@ -216,19 +212,11 @@
 
 		applyScrim();
 
-		if (mode === MODE_ONCE && !isReducedMotion()) {
-			if (progress >= ONCE_TRIGGER) {
-				setFoldTarget(1);
-			} else if (progress <= ONCE_TRIGGER - ONCE_HYSTERESIS) {
-				setFoldTarget(0);
-			}
-
-			return;
+		if (progress >= FOLD_TRIGGER) {
+			setFoldTarget(1);
+		} else if (progress <= FOLD_TRIGGER - FOLD_HYSTERESIS) {
+			setFoldTarget(0);
 		}
-
-		// 连续跟随滚动；开启「减少动态效果」时退化成二值切换
-		ignoreTween();
-		applyFold(isReducedMotion() ? (progress >= ONCE_TRIGGER ? 1 : 0) : progress);
 	}
 
 	function setFoldTarget(value) {
@@ -237,6 +225,13 @@
 		}
 
 		targetFold = value;
+
+		// 开启「减少动态效果」时不做补间，直接切换
+		if (isReducedMotion()) {
+			applyFold(value);
+			return;
+		}
+
 		startTween();
 	}
 
@@ -262,7 +257,7 @@
 				tweenStart = now;
 			}
 
-			var ratio = clamp((now - tweenStart) / ONCE_DURATION, 0, 1);
+			var ratio = clamp((now - tweenStart) / FOLD_DURATION, 0, 1);
 			applyFold(tweenFrom + (tweenTo - tweenFrom) * easeInOut(ratio));
 
 			if (ratio < 1) {
@@ -276,17 +271,6 @@
 				startTween();
 			}
 		}
-	}
-
-	function ignoreTween() {
-		targetFold = currentFold;
-
-		if (!tweenFrame) {
-			return;
-		}
-
-		window.cancelAnimationFrame(tweenFrame);
-		tweenFrame = 0;
 	}
 
 	function handleScroll() {
@@ -386,17 +370,12 @@
 	}
 
 	namespace.app = namespace.app || {};
-	namespace.app.fold = {
-		getFold: function () {
-			return currentFold;
-		},
-		getMode: function () {
-			return mode;
-		},
+	namespace.app.getFold = function () {
+		return currentFold;
 	};
 
 	namespace.runtime = namespace.runtime || {};
-	namespace.runtime.fold = namespace.app.fold;
+	namespace.runtime.getFold = namespace.app.getFold;
 
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", watchIntro, false);
