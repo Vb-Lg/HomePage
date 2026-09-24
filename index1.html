@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<!-- 正式页面：默认由 data-fold-mode 决定折叠方式（缺省为连续跟随滚动）。对比页见 index1.html / index2.html。 -->
+<!--
+对比页 A：折叠进度连续跟随滚动。
+与 index2.html 只差 body 上的 data-fold-mode 和角标文案，正式发布只需要 index.html。
+-->
 <html lang="zh-CN">
 	<head>
 		<meta charset="utf-8" />
@@ -12,16 +15,32 @@
 			name="viewport"
 			content="width=device-width, initial-scale=1, user-scalable=no"
 		/>
-		<title>VbLg</title>
+		<title>VbLg · A 连续跟随滚动</title>
 		<link rel="icon" href="images/branding/favicon.ico" />
 		<link rel="stylesheet" href="styles/base.css" />
 		<link rel="stylesheet" href="styles/pages/home.css" />
+		<style>
+			.fold-note {
+				background: rgba(0, 0, 0, 0.6);
+				border: solid 1px rgba(255, 255, 255, 0.25);
+				border-radius: 999px;
+				bottom: 1rem;
+				font-size: 0.6rem;
+				left: 1rem;
+				letter-spacing: 0.15rem;
+				padding: 0.35rem 0.9rem;
+				position: fixed;
+				text-transform: uppercase;
+				z-index: 20;
+			}
+		</style>
 		<noscript>
 			<link rel="stylesheet" href="styles/utilities/noscript.css" />
 		</noscript>
 	</head>
-	<body class="is-preload is-intro">
+	<body class="is-preload is-intro" data-fold-mode="progress">
 		<canvas id="sakura" class="sakura-canvas" aria-hidden="true"></canvas>
+		<p class="fold-note">A 连续跟随滚动</p>
 
 		<div class="page-shell">
 			<header class="hero" aria-labelledby="site-title">

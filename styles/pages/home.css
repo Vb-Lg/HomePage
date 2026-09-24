@@ -1,7 +1,27 @@
 /*
 首页布局样式。
-只负责首屏结构、响应式布局和加载动画。
+只负责首屏结构、滚动折叠（--fold）、内容区与响应式布局。
+
+--fold 由 scripts/app/hero-fold.js 写入：
+0 表示展开的首屏，1 表示折叠后固定在顶部的透明页眉。
+所有折叠相关的数值都用 calc() 表达，因此滚动时就地插值，不需要额外的过渡。
 */
+
+:root {
+	--avatar-folded-size: 2.25rem;
+	--avatar-size: 5.5rem;
+	--content-padding-block: 3rem;
+	--content-padding-inline: 2rem;
+	--fold: 0;
+	--fold-gap: 0.75rem;
+	--fold-inset: 0.5rem;
+	--fold-scrim: 0; /* 内容滑到页眉下方后才淡入的背景遮罩，由脚本写入 */
+	--header-height: 7rem; /* 占位值，hero-fold.js 会写入实测高度 */
+	--nav-link-folded-font: 0.65rem;
+	--nav-link-folded-height: 2rem;
+	--title-folded-size: 1rem;
+	--title-size: 2.25rem;
+}
 
 .sakura-canvas {
 	display: block;
@@ -13,37 +33,70 @@
 	z-index: 2;
 }
 
+/*
+内容区与页脚。
+顶部留出一整屏，因为 .hero 是 fixed 定位、不占文档流，
+折叠完成后内容正好在页眉下方接上（见 hero-fold.js 的滚动区间计算）。
+*/
 .page-shell {
 	align-items: center;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 	min-height: 100vh;
-	padding: 4rem 2rem;
+	padding: 100vh 2rem 4rem;
 	position: relative;
 	width: 100%;
 	z-index: 3;
 }
 
-.page-shell::before {
-	content: "";
-	display: block;
-}
-
+/*
+首屏。
+展开时占满一屏并垂直居中；折叠时高度收缩到 --header-height（实测值），
+于是同一套 flex 布局会自然收敛到顶部，成为透明页眉。
+注意：不要给 height/margin 之类加过渡，否则会拖慢滚动跟随。
+*/
 .hero {
 	align-items: center;
 	display: flex;
 	flex-direction: column;
+	height: calc(100vh + (var(--header-height) - 100vh) * var(--fold));
+	justify-content: center;
+	left: 0;
 	max-width: 100%;
+	pointer-events: none;
+	position: fixed;
 	text-align: center;
-	transition:
-		transform var(--duration-section) ease-in-out,
-		filter var(--duration-section) ease-in-out,
-		opacity var(--duration-section) ease-in-out;
+	top: 0;
+	transition: filter var(--duration-section) ease-in-out;
+	width: 100%;
+	z-index: 4;
+}
+
+/*
+透明页眉滚动到内容上方时补一层背景渐隐，避免两层文字叠在一起。
+--fold-scrim 只在内容真的滑到页眉下面时才大于 0。
+*/
+.hero::before {
+	background: linear-gradient(
+		to bottom,
+		var(--color-background) 0%,
+		var(--color-background) 35%,
+		transparent 100%
+	);
+	content: "";
+	height: calc(var(--header-height) * 1.8);
+	left: 0;
+	opacity: var(--fold-scrim, 0);
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: -1;
 }
 
 .hero__section {
-	margin-top: var(--space-section);
+	margin-top: calc(var(--space-section) * (1 - var(--fold)));
+	pointer-events: auto;
 	position: relative;
 	transition: opacity var(--duration-section) ease-in-out;
 }
@@ -52,10 +105,11 @@
 	background: var(--color-border);
 	content: "";
 	display: block;
-	height: calc(var(--space-section) + 1px);
+	height: calc((var(--space-section) + 1px) * (1 - var(--fold)));
 	left: calc(50% - 1px);
+	opacity: calc(1 - var(--fold));
 	position: absolute;
-	top: calc(var(--space-section) * -1 - 1px);
+	top: calc(var(--space-section) * var(--fold) - var(--space-section) - 1px);
 	width: 1px;
 }
 
@@ -67,13 +121,21 @@
 	display: none;
 }
 
+/*
+折叠态的横向排布。
+--fold-x-* / --fold-y-* 是 hero-fold.js 实测出的「折叠完成后需要平移多少像素」，
+乘上 --fold 后就能跟着滚动进度插值，从而让三块内容并成一行。
+*/
+.hero__avatar-section {
+	transform: translate3d(calc(var(--fold-x-avatar, 0px) * var(--fold)), 0, 0);
+}
+
 .hero__avatar-frame {
-	border: solid 2px var(--color-border);
+	border: solid calc(2px - 1px * var(--fold)) var(--color-border);
 	border-radius: 100%;
-	height: 5.5rem;
-	line-height: 5.5rem;
+	height: calc(var(--avatar-size) + (var(--avatar-folded-size) - var(--avatar-size)) * var(--fold));
 	overflow: hidden;
-	width: 5.5rem;
+	width: calc(var(--avatar-size) + (var(--avatar-folded-size) - var(--avatar-size)) * var(--fold));
 }
 
 .hero__avatar {
@@ -85,13 +147,27 @@
 .hero__content {
 	border-bottom: solid 1px var(--color-border);
 	border-top: solid 1px var(--color-border);
+	border-color: color-mix(in srgb, var(--color-border) calc((1 - var(--fold)) * 100%), transparent);
 	max-width: 100%;
+	/* 折叠后这块只剩标题，但盒子仍可能比标题宽，别让它挡住导航的点击 */
+	pointer-events: none;
+	transform: translate3d(
+			calc(var(--fold-x-content, 0px) * var(--fold)),
+			calc(var(--fold-y-content, 0px) * var(--fold)),
+			0
+		);
 }
 
+/* 展开动画就是这里的 max-height/padding/opacity，滚动折叠时按 --fold 反向收回 */
 .hero__content-inner {
-	max-height: 40rem;
+	max-height: calc(var(--content-keep, 3rem) * var(--fold) + 40rem * (1 - var(--fold)));
 	overflow: hidden;
-	padding: 3rem 2rem;
+	padding: calc(var(--content-padding-block) * (1 - var(--fold)))
+		calc(var(--content-padding-inline) * (1 - var(--fold)));
+}
+
+/* 只有加载时的展开动画需要过渡，之后立即交还给 --fold，避免滚动时拖尾 */
+body.is-intro .hero__content-inner {
 	transition:
 		max-height var(--duration-intro) ease,
 		padding var(--duration-intro) ease,
@@ -100,7 +176,11 @@
 }
 
 .hero__title {
-	margin-bottom: 0.5rem;
+	font-size: calc(var(--title-size) + (var(--title-folded-size) - var(--title-size)) * var(--fold));
+	letter-spacing: calc(
+		var(--font-letter-spacing-title) + (0.15rem - var(--font-letter-spacing-title)) * var(--fold)
+	);
+	margin-bottom: calc(0.5rem * (1 - var(--fold)));
 }
 
 .hero__tagline {
@@ -108,7 +188,16 @@
 	letter-spacing: var(--font-letter-spacing);
 	line-height: 2;
 	margin-bottom: 0;
+	opacity: clamp(0, calc((0.45 - var(--fold)) / 0.45), 1);
 	text-transform: uppercase;
+}
+
+.hero__nav {
+	transform: translate3d(
+			calc(var(--fold-x-nav, 0px) * var(--fold)),
+			calc(var(--fold-y-nav, 0px) * var(--fold)),
+			0
+		);
 }
 
 .nav-list {
@@ -132,12 +221,13 @@
 .nav-list__link {
 	border: 0;
 	display: block;
-	font-size: 0.8rem;
-	height: 2.75rem;
+	font-size: calc(0.8rem + (var(--nav-link-folded-font) - 0.8rem) * var(--fold));
+	height: calc(2.75rem + (var(--nav-link-folded-height) - 2.75rem) * var(--fold));
 	letter-spacing: var(--font-letter-spacing);
-	line-height: 2.75rem;
-	min-width: 7.5rem;
-	padding: 0 1.25rem 0 1.45rem;
+	line-height: calc(2.75rem + (var(--nav-link-folded-height) - 2.75rem) * var(--fold));
+	min-width: calc(7.5rem * (1 - var(--fold)));
+	padding: 0 calc(1.25rem * (1 - var(--fold)) + 0.7rem * var(--fold)) 0
+		calc(1.45rem * (1 - var(--fold)) + 0.9rem * var(--fold));
 	text-transform: uppercase;
 }
 
@@ -149,8 +239,79 @@
 	background-color: var(--color-border-active);
 }
 
+/* 内容区：折叠过程中先淡出/下沉，等页眉收好后再升上来 */
+.page-content {
+	max-width: 44rem;
+	opacity: clamp(0, calc((var(--fold) - 0.4) / 0.6), 1);
+	transform: translateY(calc(2rem * (1 - var(--fold))));
+	width: 100%;
+}
+
+.content-section {
+	border-top: solid 1px var(--color-border);
+	padding: 2.5rem 0;
+}
+
+.content-section:first-child {
+	border-top: 0;
+	padding-top: 0;
+}
+
+.content-section__title {
+	font-size: 0.8rem;
+	letter-spacing: var(--font-letter-spacing);
+	margin-bottom: 1rem;
+}
+
+.content-section__text {
+	font-size: 0.9rem;
+	line-height: 2;
+	margin-bottom: 1rem;
+	opacity: 0.85;
+}
+
+.content-section__text:last-child {
+	margin-bottom: 0;
+}
+
+.link-grid {
+	display: grid;
+	gap: 0.75rem;
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+.link-grid__link {
+	border: solid 1px var(--color-border);
+	border-radius: var(--radius-base);
+	display: block;
+	padding: 0.9rem 1rem;
+	text-align: left;
+}
+
+.link-grid__link:hover {
+	background-color: var(--color-border-hover);
+}
+
+.link-grid__link:active {
+	background-color: var(--color-border-active);
+}
+
+.link-grid__name {
+	display: block;
+	font-size: 0.8rem;
+	letter-spacing: var(--font-letter-spacing);
+	text-transform: uppercase;
+}
+
+.link-grid__desc {
+	display: block;
+	font-size: 0.7rem;
+	letter-spacing: 0.05rem;
+	opacity: 0.7;
+}
+
 .site-footer {
-	margin-top: 2rem;
+	margin-top: 4rem;
 	max-width: 100%;
 	text-align: center;
 	transition:
@@ -187,6 +348,14 @@
 	width: 1.875rem;
 }
 
+/* 测量折叠态几何信息时关闭一切过渡，保证一帧内读到最终值 */
+body.is-measuring *,
+body.is-measuring *::before,
+body.is-measuring *::after {
+	animation: none !important;
+	transition: none !important;
+}
+
 body.is-preload .hero {
 	filter: blur(0.125rem);
 }
@@ -213,27 +382,40 @@ body.is-preload .site-footer {
 }
 
 @media screen and (max-width: 736px) {
+	:root {
+		--avatar-folded-size: 2rem;
+		--avatar-size: 4.75rem;
+		--content-padding-block: 2.5rem;
+		--content-padding-inline: 1rem;
+		--fold-gap: 0.6rem;
+		--fold-inset: 0.4rem;
+		--nav-link-folded-height: 1.75rem;
+		--title-folded-size: 0.9rem;
+		--title-size: 1.75rem;
+	}
+
 	.page-shell {
-		padding: 2rem 1rem;
+		padding: 100vh 1rem 2rem;
 	}
 
 	.hero__section {
-		margin-top: 2rem;
+		margin-top: calc(2rem * (1 - var(--fold)));
 	}
 
 	.hero__section::before {
-		height: calc(2rem + 1px);
-		top: calc(-2rem - 1px);
+		height: calc((2rem + 1px) * (1 - var(--fold)));
+		top: calc(2rem * var(--fold) - 2rem - 1px);
 	}
 
-	.hero__avatar-frame {
-		height: 4.75rem;
-		line-height: 4.75rem;
-		width: 4.75rem;
+	/* 窄屏放不下一整行按钮，折叠后把导航彻底收起（含键盘焦点） */
+	.hero__nav {
+		max-height: calc(20rem * (1 - var(--fold)));
+		opacity: calc(1 - var(--fold));
+		overflow: hidden;
 	}
 
-	.hero__content-inner {
-		padding: 2.5rem 1rem;
+	body.is-folded .hero__nav {
+		visibility: hidden;
 	}
 
 	.hero__tagline {
@@ -242,16 +424,12 @@ body.is-preload .site-footer {
 }
 
 @media screen and (max-width: 480px) {
+	:root {
+		--content-padding-inline: 0;
+	}
+
 	.page-shell {
-		padding: 1rem;
-	}
-
-	.hero {
-		padding: 1.5rem 0;
-	}
-
-	.hero__content-inner {
-		padding: 2.5rem 0;
+		padding: 100vh 1rem 1.5rem;
 	}
 
 	.nav-list {
