@@ -48,7 +48,7 @@
 	var tweenTo = 0;
 	var tweenStart = 0;
 	var measureTimer = 0;
-	// 用于判断滚动方向：向下滚动时我们会把页面直接跳到第二页顶端，避免卡在中间状态
+	// 用于判断滚动方向：向下/向上滚动时我们会把页面直接跳到对应分页顶端，避免卡在中间状态
 	var lastScrollTop = 0;
 	var isScrollingDown = false;
 
@@ -224,6 +224,11 @@
 
 			setFoldTarget(1);
 		} else if (progress <= FOLD_TRIGGER - FOLD_HYSTERESIS) {
+			// 如果用户是向上滚动，则直接把页面滚动到展开位置（第一页顶端），
+			// 同样避免出现中间停滞。
+			if (!isScrollingDown && typeof scrollRange === "number") {
+				window.scrollTo({ top: 0, behavior: "auto" });
+			}
 			setFoldTarget(0);
 		}
 	}
