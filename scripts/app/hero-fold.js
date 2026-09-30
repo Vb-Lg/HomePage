@@ -48,9 +48,10 @@
 	var tweenTo = 0;
 	var tweenStart = 0;
 	var measureTimer = 0;
-	// 用于判断滚动方向：向下/向上滚动时我们会把页面直接跳到对应分页顶端，避免卡在中间状态
+	// 用于判断滚动方向：越过临界点时直接跳到对应分页顶端，避免卡在中间状态
 	var lastScrollTop = 0;
-	var isScrollingDown = false;
+	var scrollDirection = 0; // 1 向下，-1 向上
+	var isSnapping = false;
 
 	function clamp(value, min, max) {
 		if (value < min) {
@@ -205,6 +206,20 @@
 		scrollRange = span > 1 ? span : Math.max(1, window.innerHeight * 0.75);
 	}
 
+	function snapTo(top) {
+		if (Math.abs(getScrollTop() - top) < 1) {
+			return;
+		}
+
+		isSnapping = true;
+		lastScrollTop = top;
+		window.scrollTo(0, top);
+		window.setTimeout(function () {
+			lastScrollTop = getScrollTop();
+			isSnapping = false;
+		}, 80);
+	}
+
 	/* 阈值判定带一点回滞，避免停在临界点附近时来回抖动 */
 	function syncFold() {
 		if (!active) {
@@ -212,23 +227,28 @@
 		}
 
 		var progress = getProgress();
+		var scrollTop = getScrollTop();
 
 		applyScrim();
 
-		if (progress >= FOLD_TRIGGER) {
-			// 如果用户是向下滚动，则直接把页面滚动到折叠完成的位置（第二页顶端），
-			// 避免停留在中间状态导致视觉不连贯。
-			if (isScrollingDown && typeof scrollRange === "number") {
-				window.scrollTo({ top: scrollRange, behavior: "auto" });
+		if (scrollDirection > 0 && progress >= FOLD_TRIGGER) {
+			// 从第一页向下越过阈值：跳到第二页顶端（内容刚接上页眉），跳过中间态
+			if (scrollTop < scrollRange - 1) {
+				snapTo(scrollRange);
 			}
 
 			setFoldTarget(1);
-		} else if (progress <= FOLD_TRIGGER - FOLD_HYSTERESIS) {
-			// 如果用户是向上滚动，则直接把页面滚动到展开位置（第一页顶端），
-			// 同样避免出现中间停滞。
-			if (!isScrollingDown && typeof scrollRange === "number") {
-				window.scrollTo({ top: 0, behavior: "auto" });
+		} else if (scrollDirection < 0 && scrollTop < scrollRange && (targetFold === 1 || progress <= FOLD_TRIGGER - FOLD_HYSTERESIS)) {
+			// 从第二页向上回到折叠区间，或从中间向上越过展开阈值：直接回到第一页顶端。
+			// 必须在「已折叠」时就处理，不能等 progress 落到 0.38，否则用户已经滚过整个中间段。
+			if (scrollTop > 1) {
+				snapTo(0);
 			}
+
+			setFoldTarget(0);
+		} else if (progress >= FOLD_TRIGGER) {
+			setFoldTarget(1);
+		} else if (progress <= FOLD_TRIGGER - FOLD_HYSTERESIS) {
 			setFoldTarget(0);
 		}
 	}
@@ -288,15 +308,25 @@
 	}
 
 	function handleScroll() {
-		if (!active || scrollFrame) {
+		if (!active || scrollFrame || isSnapping) {
 			return;
 		}
 
 		scrollFrame = window.requestAnimationFrame(function () {
 			scrollFrame = 0;
-			// 更新滚动方向信息
+
+			if (isSnapping) {
+				return;
+			}
+
 			var st = getScrollTop();
-			isScrollingDown = st > lastScrollTop;
+
+			if (st > lastScrollTop) {
+				scrollDirection = 1;
+			} else if (st < lastScrollTop) {
+				scrollDirection = -1;
+			}
+
 			lastScrollTop = st;
 			syncFold();
 		});
@@ -317,6 +347,7 @@
 		}
 
 		active = true;
+		lastScrollTop = getScrollTop();
 		measure();
 	}
 
