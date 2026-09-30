@@ -48,6 +48,9 @@
 	var tweenTo = 0;
 	var tweenStart = 0;
 	var measureTimer = 0;
+	// 用于判断滚动方向：向下滚动时我们会把页面直接跳到第二页顶端，避免卡在中间状态
+	var lastScrollTop = 0;
+	var isScrollingDown = false;
 
 	function clamp(value, min, max) {
 		if (value < min) {
@@ -213,6 +216,12 @@
 		applyScrim();
 
 		if (progress >= FOLD_TRIGGER) {
+			// 如果用户是向下滚动，则直接把页面滚动到折叠完成的位置（第二页顶端），
+			// 避免停留在中间状态导致视觉不连贯。
+			if (isScrollingDown && typeof scrollRange === "number") {
+				window.scrollTo({ top: scrollRange, behavior: "auto" });
+			}
+
 			setFoldTarget(1);
 		} else if (progress <= FOLD_TRIGGER - FOLD_HYSTERESIS) {
 			setFoldTarget(0);
@@ -280,6 +289,10 @@
 
 		scrollFrame = window.requestAnimationFrame(function () {
 			scrollFrame = 0;
+			// 更新滚动方向信息
+			var st = getScrollTop();
+			isScrollingDown = st > lastScrollTop;
+			lastScrollTop = st;
 			syncFold();
 		});
 	}
