@@ -50,6 +50,20 @@
 }
 
 /*
+一页一顿由 CSS scroll-snap 完成（根滚动容器）：
+- proximity 而非 mandatory，避免折叠过渡区间被强制吸附卡住；
+- 各 data-page section 上另有 snap-align: start / snap-stop: always。
+折叠过渡期间（--fold 在 0 和 1 之间）由 page-snap.js 临时关掉，动画结束后再恢复。
+*/
+html {
+	scroll-snap-type: y proximity;
+}
+
+html.is-snap-off {
+	scroll-snap-type: none;
+}
+
+/*
 首屏。
 展开时占满一屏并垂直居中；折叠时高度收缩到 --header-height（实测值），
 于是同一套 flex 布局会自然收敛到顶部，成为透明页眉。
@@ -73,18 +87,18 @@
 }
 
 /*
-透明页眉滚动到内容上方时补一层背景渐隐，避免两层文字叠在一起。
+透明页眉滚动到内容上方时补一层很浅的渐隐，避免两层文字完全叠在一起。
 --fold-scrim 只在内容真的滑到页眉下面时才大于 0。
 */
 .hero::before {
 	background: linear-gradient(
 		to bottom,
-		var(--color-background) 0%,
-		var(--color-background) 35%,
+		color-mix(in srgb, var(--color-background) 65%, transparent) 0%,
+		color-mix(in srgb, var(--color-background) 35%, transparent) 60%,
 		transparent 100%
 	);
 	content: "";
-	height: calc(var(--header-height) * 1.8);
+	height: calc(var(--header-height) * 1.3);
 	left: 0;
 	opacity: var(--fold-scrim, 0);
 	pointer-events: none;
@@ -248,8 +262,20 @@ body.is-intro .hero__content-inner {
 }
 
 .content-section {
-	border-top: solid 1px var(--color-border);
 	padding: 2.5rem 0;
+}
+
+/*
+分页 section：每个 data-page 独占一屏，滚动停靠交给 CSS scroll-snap（见 page-shell）。
+用 min-height 而不是 height，内容超出视口时仍然可以正常往下排。
+*/
+.content-section[data-page] {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	min-height: calc(100vh - var(--header-height));
+	scroll-snap-align: start;
+	scroll-snap-stop: always;
 }
 
 .content-section:first-child {

@@ -116,7 +116,8 @@
 
 			<main class="page-content" id="content">
 				<!-- TODO: 这里的文案与卡片都是占位内容，按需替换即可。 -->
-				<section class="content-section" aria-labelledby="about-title">
+				<!-- 每个带 data-page 的 section 独占一屏，滚动时会停靠到它的顶部；想加新页面就再加一个同结构的 section。 -->
+				<section class="content-section" aria-labelledby="about-title" data-page>
 					<h2 class="content-section__title" id="about-title">关于</h2>
 					<p class="content-section__text">
 						欢迎来到 VbLg。这里是我自己维护的一小块地方：博客、邮箱、判题、网盘、Git、云端编辑器和运行状态都跑在自己的服务器上，
@@ -125,10 +126,7 @@
 					<p class="content-section__text">
 						喜欢折腾系统与网络，也写一点前端。如果站点出了什么问题，欢迎从下面的联系方式找我。
 					</p>
-				</section>
 
-				<section class="content-section" aria-labelledby="services-title">
-					<h2 class="content-section__title" id="services-title">服务</h2>
 					<ul class="link-grid">
 						<li class="link-grid__item">
 							<a
@@ -207,6 +205,32 @@
 								<span class="link-grid__desc">服务可用性监控</span>
 							</a>
 						</li>
+					</ul>
+				</section>
+
+				<section class="content-section" aria-labelledby="contact-title" data-page>
+					<h2 class="content-section__title" id="contact-title">联系</h2>
+					<p class="content-section__text">
+						<!-- TODO: 占位文案，按需替换。 -->
+						想交流或者反馈问题，可以通过页脚的社交链接找到我；邮件通常回复得最快。
+					</p>
+				</section>
+
+				<section class="content-section" aria-labelledby="projects-title" data-page>
+					<h2 class="content-section__title" id="projects-title">项目</h2>
+					<ul class="link-grid">
+						<li class="link-grid__item">
+							<a
+								class="link-grid__link"
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://github.com/hanyixuanten"
+							>
+								<span class="link-grid__name">HomePage</span>
+								<span class="link-grid__desc">本站源码</span>
+							</a>
+						</li>
+						<!-- TODO: 占位卡片，按需增删。 -->
 					</ul>
 				</section>
 			</main>
@@ -298,5 +322,6 @@
 		<script src="scripts/effects/sakura/renderer.js"></script>
 		<script src="scripts/app/bootstrap.js"></script>
 		<script src="scripts/app/hero-fold.js"></script>
+		<script src="scripts/app/page-snap.js"></script>
 	</body>
 </html>
