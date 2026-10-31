@@ -462,6 +462,55 @@ body.is-preload .site-footer {
 	opacity: 0;
 }
 
+/*
+7 个按钮各带 7.5rem 最小宽度，一行大约要 848px，再窄就溢出视口。
+这里让导航自动折成两行：第一行 4 个各占 25%，第二行剩下的按钮均分整行，边框顺带重排。
+折叠后的页眉只有一行高，装不下两行导航，所以这一档范围内折叠时把导航整体收起。
+*/
+@media screen and (max-width: 848px) {
+	.hero__nav {
+		max-height: calc(20rem * (1 - var(--fold)));
+		max-width: calc(100% - 2rem);
+		opacity: calc(1 - var(--fold));
+		overflow: hidden;
+		width: 100%;
+	}
+
+	/* 折叠后导航虽然已经淡出并被压扁，但键盘焦点还会停在按钮上，这里彻底隐藏 */
+	body.is-folded .hero__nav {
+		visibility: hidden;
+	}
+
+	.nav-list {
+		flex-wrap: wrap;
+		width: 100%;
+	}
+
+	.nav-list__item {
+		flex: 1 1 25%;
+		min-width: 0;
+	}
+
+	/* 换行后每行首项不再需要左分隔线，第二行起补上顶分隔线 */
+	.nav-list__item:nth-child(4n + 1) {
+		border-left: 0;
+	}
+
+	.nav-list__item:nth-child(n + 5) {
+		border-top: solid 1px var(--color-border);
+	}
+
+	/* 折行后每个按钮变窄，去掉折叠态那套随 --fold 变化的横向留白，改为均分宽度 */
+	.nav-list__link {
+		min-width: 0;
+		padding-left: 0.75rem;
+		padding-right: 0.75rem;
+		text-align: center;
+		white-space: nowrap;
+		width: 100%;
+	}
+}
+
 @media screen and (max-width: 980px) {
 	.hero__tagline br {
 		display: none;
@@ -494,15 +543,11 @@ body.is-preload .site-footer {
 		top: calc(2rem * var(--fold) - 2rem - 1px);
 	}
 
-	/* 窄屏放不下一整行按钮，折叠后把导航彻底收起（含键盘焦点） */
-	.hero__nav {
-		max-height: calc(20rem * (1 - var(--fold)));
-		opacity: calc(1 - var(--fold));
-		overflow: hidden;
-	}
-
-	body.is-folded .hero__nav {
-		visibility: hidden;
+	/* 窄屏两行导航的按钮间距收一点，给文字留出宽度（折行规则见 848px 处） */
+	.nav-list__link {
+		letter-spacing: 0.1rem;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
 	}
 
 	.hero__tagline {
@@ -518,25 +563,12 @@ body.is-preload .site-footer {
 	.page-shell {
 		padding: 100vh 1rem 0;
 	}
+}
 
-	.nav-list {
-		flex-direction: column;
-		min-width: 10rem;
-	}
-
-	.nav-list__item {
-		border-left: 0;
-		border-top: solid 1px var(--color-border);
-	}
-
-	.nav-list__item:first-child {
-		border-top: 0;
-	}
-
+@media screen and (max-width: 400px) {
 	.nav-list__link {
-		height: 3rem;
-		line-height: 3rem;
-		min-width: 0;
-		width: 100%;
+		letter-spacing: 0.05rem;
+		padding-left: 0.35rem;
+		padding-right: 0.35rem;
 	}
 }
