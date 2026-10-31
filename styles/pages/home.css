@@ -16,6 +16,7 @@
 	--fold-gap: 0.75rem;
 	--fold-inset: 0.5rem;
 	--fold-scrim: 0; /* 内容滑到页眉下方后才淡入的背景遮罩，由脚本写入 */
+	--footer-band: 7rem; /* 最后一页底部预留给页脚的高度，页脚借此不再额外撑出一段滚动 */
 	--header-height: 7rem; /* 占位值，hero-fold.js 会写入实测高度 */
 	--nav-link-folded-font: 0.65rem;
 	--nav-link-folded-height: 2rem;
@@ -37,13 +38,15 @@
 内容区与页脚。
 顶部留出一整屏，因为 .hero 是 fixed 定位、不占文档流，
 折叠完成后内容正好在页眉下方接上（见 hero-fold.js 的滚动区间计算）。
+底部不再留 padding：页脚占的 --footer-band 已经算进最后一页的高度里，
+这样文档正好在最后一页结束，滚到底不会多出一段空白。
 */
 .page-shell {
 	align-items: center;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
-	padding: 100vh 2rem 4rem;
+	padding: 100vh 2rem 0;
 	position: relative;
 	width: 100%;
 	z-index: 3;
@@ -278,6 +281,14 @@ body.is-intro .hero__content-inner {
 	scroll-snap-stop: always;
 }
 
+/*
+最后一页把页脚的位置也算进这一屏：页脚不再单独占一屏，也不需要额外滚动，
+滚动到底时「联系 + 页脚」正好合成完整的一屏。
+*/
+.content-section[data-page]:last-child {
+	min-height: calc(100vh - var(--footer-band));
+}
+
 .content-section:first-child {
 	border-top: 0;
 	padding-top: 0;
@@ -336,9 +347,59 @@ body.is-intro .hero__content-inner {
 	opacity: 0.7;
 }
 
+/* 卡片底部的技术栈 / 账号等次要信息，用等宽字体和更低的对比度压住 */
+.link-grid__meta {
+	display: block;
+	font-family: var(--font-family-fixed);
+	font-size: 0.62rem;
+	letter-spacing: 0.04rem;
+	margin-top: 0.45rem;
+	opacity: 0.55;
+}
+
+/* 没有可去的外部链接的卡片：保留卡片外观，但不要悬停反馈，避免暗示可点击 */
+.link-grid__link--static {
+	cursor: default;
+}
+
+.link-grid__link--static:hover,
+.link-grid__link--static:active {
+	background-color: transparent;
+}
+
+/* 「关于」底部的技术栈标签，横排自动换行 */
+.tag-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	margin-top: 1.5rem;
+}
+
+.tag-list__item {
+	border: solid 1px var(--color-border);
+	border-radius: var(--radius-base);
+	font-size: 0.65rem;
+	letter-spacing: 0.08rem;
+	opacity: 0.8;
+	padding: 0.2rem 0.6rem;
+	text-transform: uppercase;
+}
+
+/*
+页脚。
+高度固定占下 --footer-band（最后一页为它让出了这块空间），内容在其中垂直居中，
+于是它贴在最后一屏底部、不会把文档再往下撑出一段，也没有多余留白。
+*/
 .site-footer {
-	margin-top: 4rem;
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	margin-top: 0;
 	max-width: 100%;
+	min-height: var(--footer-band);
+	padding-bottom: 1rem;
+	scroll-snap-align: end;
 	text-align: center;
 	transition:
 		transform var(--duration-section) ease-in-out,
@@ -421,7 +482,7 @@ body.is-preload .site-footer {
 	}
 
 	.page-shell {
-		padding: 100vh 1rem 2rem;
+		padding: 100vh 1rem 0;
 	}
 
 	.hero__section {
@@ -455,7 +516,7 @@ body.is-preload .site-footer {
 	}
 
 	.page-shell {
-		padding: 100vh 1rem 1.5rem;
+		padding: 100vh 1rem 0;
 	}
 
 	.nav-list {

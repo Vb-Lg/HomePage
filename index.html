@@ -1,308 +1,212 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-	<head>
-		<meta charset="utf-8" />
-		<meta http-equiv="content-language" content="zh-cn" />
-		<meta
-			name="description"
-			content="VbLg |关键词：VbLg, hanyixuanten"
-		/>
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, user-scalable=no"
-		/>
-		<title>VbLg</title>
-		<link rel="icon" href="images/branding/favicon.ico" />
-		<link rel="stylesheet" href="styles/base.css" />
-		<link rel="stylesheet" href="styles/pages/home.css" />
-		<noscript>
-			<link rel="stylesheet" href="styles/utilities/noscript.css" />
-		</noscript>
-	</head>
-	<body class="is-preload is-intro">
-		<canvas id="sakura" class="sakura-canvas" aria-hidden="true"></canvas>
 
-		<div class="page-shell">
-			<header class="hero" aria-labelledby="site-title">
-				<div class="hero__section hero__avatar-section">
-					<div class="hero__avatar-frame">
-						<img
-							src="images/branding/avatar.png"
-							alt="个人引导页头像"
-							title="个人引导页"
-							class="hero__avatar"
-							width="88"
-							height="88"
-							decoding="async"
-						/>
-					</div>
-				</div>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="content-language" content="zh-cn" />
+    <meta name="description" content="VbLg hanyixuanten |关键词：VbLg, hanyixuanten" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>VbLg</title>
+    <link rel="icon" href="images/branding/favicon.ico" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/pages/home.css" />
+    <noscript>
+        <link rel="stylesheet" href="styles/utilities/noscript.css" />
+    </noscript>
+</head>
 
-				<div class="hero__section hero__content">
-					<div class="hero__content-inner">
-						<h1 id="site-title" class="hero__title">hanyixuanten</h1>
-						<p class="hero__tagline">The&nbsp;quick&nbsp;brown&nbsp;fox&nbsp;jumps&nbsp;over&nbsp;the&nbsp;lazy&nbsp;dog</p>
-					</div>
-				</div>
+<body class="is-preload is-intro">
+    <canvas id="sakura" class="sakura-canvas" aria-hidden="true"></canvas>
 
-				<nav class="hero__section hero__nav" aria-label="站点导航">
-					<ul class="nav-list">
-						<li class="nav-list__item">
-							<a
-								class="nav-list__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://blog.vblg.top"
-								>Blog</a
-							>
-						</li>
-						<li class="nav-list__item">
-							<a
-								class="nav-list__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://mail.vblg.top"
-								>Mail</a
-							>
-						</li>
-						<li class="nav-list__item">
-							<a
-								class="nav-list__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://oia.vblg.top"
-								>OI Agent</a
-							>
-						</li>
-						<li class="nav-list__item">
-							<a
-								class="nav-list__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://disk.vblg.top"
-								>网盘</a
-							>
-						</li>
-						<li class="nav-list__item">
-							<a
-								class="nav-list__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://git.vblg.top"
-								>Gitea</a
-							>
-						</li>
-						<li class="nav-list__item">
-							<a
-								class="nav-list__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://code.vblg.top"
-								>VScode</a
-							>
-						</li>
-						<li class="nav-list__item">
-							<a
-								class="nav-list__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://status.vblg.top"
-								>运行状态</a
-							>
-						</li>
-					</ul>
-				</nav>
-			</header>
+    <div class="page-shell">
+        <header class="hero" aria-labelledby="site-title">
+            <div class="hero__section hero__avatar-section">
+                <div class="hero__avatar-frame">
+                    <img src="images/branding/avatar.png" alt="个人引导页头像" title="个人引导页" class="hero__avatar" width="88"
+                        height="88" decoding="async" />
+                </div>
+            </div>
 
-			<main class="page-content" id="content">
-				<!-- TODO: 这里的文案与卡片都是占位内容，按需替换即可。 -->
-				<!-- 每个带 data-page 的 section 独占一屏，滚动时会停靠到它的顶部；想加新页面就再加一个同结构的 section。 -->
-				<section class="content-section" aria-labelledby="about-title" data-page>
-					<h2 class="content-section__title" id="about-title">关于</h2>
-					<p class="content-section__text">
-						欢迎来到 VbLg。这里是我自己维护的一小块地方：博客、邮箱、判题、网盘、Git、云端编辑器和运行状态都跑在自己的服务器上，
-						上面的入口可以直接过去。
-					</p>
-					<p class="content-section__text">
-						喜欢折腾系统与网络，也写一点前端。如果站点出了什么问题，欢迎从下面的联系方式找我。
-					</p>
+            <div class="hero__section hero__content">
+                <div class="hero__content-inner">
+                    <h1 id="site-title" class="hero__title">hanyixuanten</h1>
+                    <p class="hero__tagline">冷知识：这行文字是随机的</p>
+                </div>
+            </div>
 
-					<ul class="link-grid">
-						<li class="link-grid__item">
-							<a
-								class="link-grid__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://blog.vblg.top"
-							>
-								<span class="link-grid__name">Blog</span>
-								<span class="link-grid__desc">技术笔记与随笔</span>
-							</a>
-						</li>
-						<li class="link-grid__item">
-							<a
-								class="link-grid__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://mail.vblg.top"
-							>
-								<span class="link-grid__name">Mail</span>
-								<span class="link-grid__desc">自有域名邮箱</span>
-							</a>
-						</li>
-						<li class="link-grid__item">
-							<a
-								class="link-grid__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://oj.vblg.top"
-							>
-								<span class="link-grid__name">OI Agent</span>
-								<span class="link-grid__desc">信息学助手</span>
-							</a>
-						</li>
-						<li class="link-grid__item">
-							<a
-								class="link-grid__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://disk.vblg.top"
-							>
-								<span class="link-grid__name">网盘</span>
-								<span class="link-grid__desc">私有文件存储</span>
-							</a>
-						</li>
-						<li class="link-grid__item">
-							<a
-								class="link-grid__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://git.vblg.top"
-							>
-								<span class="link-grid__name">Gitea</span>
-								<span class="link-grid__desc">代码仓库</span>
-							</a>
-						</li>
-						<li class="link-grid__item">
-							<a
-								class="link-grid__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://code.vblg.top"
-							>
-								<span class="link-grid__name">VScode</span>
-								<span class="link-grid__desc">Vscode-server</span>
-							</a>
-						</li>
-						<li class="link-grid__item">
-							<a
-								class="link-grid__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://status.vblg.top"
-							>
-								<span class="link-grid__name">运行状态</span>
-								<span class="link-grid__desc">服务可用性监控</span>
-							</a>
-						</li>
-					</ul>
-				</section>
+            <nav class="hero__section hero__nav" aria-label="站点导航">
+                <ul class="nav-list">
+                    <li class="nav-list__item">
+                        <a class="nav-list__link" target="_blank" rel="noopener noreferrer"
+                            href="https://blog.vblg.top">Blog</a>
+                    </li>
+                    <li class="nav-list__item">
+                        <a class="nav-list__link" target="_blank" rel="noopener noreferrer"
+                            href="https://mail.vblg.top">Mail</a>
+                    </li>
+                    <li class="nav-list__item">
+                        <a class="nav-list__link" target="_blank" rel="noopener noreferrer"
+                            href="https://oia.vblg.top">OI Agent</a>
+                    </li>
+                    <li class="nav-list__item">
+                        <a class="nav-list__link" target="_blank" rel="noopener noreferrer"
+                            href="https://disk.vblg.top">网盘</a>
+                    </li>
+                    <li class="nav-list__item">
+                        <a class="nav-list__link" target="_blank" rel="noopener noreferrer"
+                            href="https://git.vblg.top">Git</a>
+                    </li>
+                    <li class="nav-list__item">
+                        <a class="nav-list__link" target="_blank" rel="noopener noreferrer"
+                            href="https://code.vblg.top">VScode</a>
+                    </li>
+                    <li class="nav-list__item">
+                        <a class="nav-list__link" target="_blank" rel="noopener noreferrer"
+                            href="https://status.vblg.top">运行状态</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
 
-				<section class="content-section" aria-labelledby="contact-title" data-page>
-					<h2 class="content-section__title" id="contact-title">联系</h2>
-					<p class="content-section__text">
-						想交流或者反馈问题，可以通过页脚的社交链接找到我；邮件通常回复得最快。
-					</p>
-				</section>
+        <main class="page-content" id="content">
+            <!-- 每个带 data-page 的 section 独占一屏，滚动时会停靠到它的顶部；想加新页面就再加一个同结构的 section。 -->
+            <section class="content-section" aria-labelledby="about-title" data-page>
+                <h2 class="content-section__title" id="about-title">关于</h2>
+                <p class="content-section__text">
+                    欢迎来到 VbLg。这里是我自己维护的一小块地方：博客、邮箱、判题、网盘、Git、云端编辑器和运行状态都跑在自己的服务器上，
+                    上面的入口可以直接过去。
+                </p>
+                <p class="content-section__text">
+                    最近专心在一件事上：把 OI 辅助学习系统里的「知识点推荐」调准，让它真的对得上题目的考点。
+                </p>
 
-				<section class="content-section" aria-labelledby="projects-title" data-page>
-					<h2 class="content-section__title" id="projects-title">项目</h2>
-					<ul class="link-grid">
-						<li class="link-grid__item">
-							<a
-								class="link-grid__link"
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://github.com/Vb-Lg/Homepage"
-							>
-								<span class="link-grid__name">HomePage</span>
-								<span class="link-grid__desc">本站源码</span>
-							</a>
-						</li>
-					</ul>
-				</section>
-			</main>
+                <ul class="tag-list" aria-label="常用的东西">
+                    <li class="tag-list__item">C++</li>
+                    <li class="tag-list__item">MySQL</li>
+                    <li class="tag-list__item">Redis</li>
+                    <li class="tag-list__item">Linux</li>
+                    <li class="tag-list__item">Nginx</li>
+                    <li class="tag-list__item">Git</li>
+                    <li class="tag-list__item">HTML / CSS / JS</li>
+                </ul>
+            </section>
 
-			<footer class="site-footer">
-				<p class="site-footer__text">
-					Copyright&nbsp;&copy;&nbsp;2021 -
-					<span data-current-year>2026</span><br />
-					All&nbsp;Rights&nbsp;Reserved
-				</p>
+            <section class="content-section" aria-labelledby="projects-title" data-page>
+                <h2 class="content-section__title" id="projects-title">项目</h2>
+                <ul class="link-grid">
+                    <li class="link-grid__item">
+                        <a class="link-grid__link" target="_blank" rel="noopener noreferrer"
+                            href="https://oia.vblg.top/">
+                            <span class="link-grid__name">信息学竞赛辅助学习系统</span>
+                            <span class="link-grid__desc">输入题号与代码，给出评分，并指出下一步该补的知识点</span>
+                            <span class="link-grid__meta">Go · MySQL · Redis · DeepSeek</span>
+                        </a>
+                    </li>
+                    <li class="link-grid__item">
+                        <a class="link-grid__link" target="_blank" rel="noopener noreferrer"
+                            href="https://github.com/Vb-Lg/class-history-template">
+                            <span class="link-grid__name">班史模板</span>
+                            <span class="link-grid__desc">基于 Astro 和 Cloudflare Pages 的班史模板，支持提交文章、发表评论等</span>
+                            <span class="link-grid__meta">HTML · Astro · Cloudflare</span>
+                        </a>
+                    </li>
+                    <li class="link-grid__item">
+                        <a class="link-grid__link" target="_blank" rel="noopener noreferrer"
+                            href="https://github.com/Vb-Lg/HomePage">
+                            <span class="link-grid__name">HomePage</span>
+                            <span class="link-grid__desc">本页源码：首屏滚动折叠与分页</span>
+                            <span class="link-grid__meta">HTML · CSS · JS</span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
 
-				<ul class="site-footer__social-list" aria-label="联系方式">
-					<li class="site-footer__social-item">
-						<a
-							class="site-footer__social-link"
-							target="_blank"
-							rel="noopener noreferrer"
-							href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=1823773407&website=vblg.top"
-							aria-label="QQ"
-						>
-							<img
-								src="images/social/qq.svg"
-								alt="QQ"
-								width="30"
-								height="30"
-								decoding="async"
-							/>
-						</a>
-					</li>
-					<li class="site-footer__social-item">
-						<a
-							class="site-footer__social-link"
-							target="_blank"
-							rel="noopener noreferrer"
-							href="mailto:admin@vblg.top"
-							aria-label="Mail"
-						>
-							<img
-								src="images/social/mail.svg"
-								alt="Mail"
-								width="30"
-								height="30"
-								decoding="async"
-							/>
-						</a>
-					</li>
-					<li class="site-footer__social-item">
-						<a
-							class="site-footer__social-link"
-							target="_blank"
-							rel="noopener noreferrer"
-							href="https://github.com/hanyixuanten"
-							aria-label="Github"
-						>
-							<img
-								src="images/social/github.svg"
-								alt="Github"
-								width="30"
-								height="30"
-								decoding="async"
-							/>
-						</a>
-					</li>
-				</ul>
-			</footer>
-		</div>
+            <section class="content-section" aria-labelledby="services-title" data-page>
+                <h2 class="content-section__title" id="services-title">自建服务</h2>
+                <p class="content-section__text">
+                    一台自己的服务器，服务都跑在上面，按子域名分开。上面的入口可以直接过去。
+                </p>
+                <ul class="link-grid">
+                    <!-- <li class="link-grid__item">
+                        <a class="link-grid__link" target="_blank" rel="noopener noreferrer"
+                            href="https://blog.vblg.top">
+                            <span class="link-grid__name">Blog</span>
+                            <span class="link-grid__desc">技术笔记与随笔</span>
+                        </a>
+                    </li> -->
+                </ul>
+            </section>
+            <section class="content-section" aria-labelledby="contact-title" data-page>
+                <h2 class="content-section__title" id="contact-title">联系</h2>
+                <p class="content-section__text">
+                    站点出了问题、想交流 OI，或者只是聊聊怎么把服务搭起来，都可以直接找我。邮件回得最快，QQ 也常开。
+                </p>
+                <ul class="link-grid">
+                    <li class="link-grid__item">
+                        <a class="link-grid__link" href="mailto:admin@vblg.top">
+                            <span class="link-grid__name">邮件</span>
+                            <span class="link-grid__desc">admin@vblg.top</span>
+                        </a>
+                    </li>
+                    <li class="link-grid__item">
+                        <a class="link-grid__link" target="_blank" rel="noopener noreferrer"
+                            href="http://wpa.qq.com/msgrd?v=3&amp;uin=1823773407&amp;site=qq&amp;menu=yes">
+                            <span class="link-grid__name">QQ</span>
+                            <span class="link-grid__desc">1823773407</span>
+                        </a>
+                    </li>
+                    <li class="link-grid__item">
+                        <a class="link-grid__link" target="_blank" rel="noopener noreferrer"
+                            href="https://github.com/hanyixuanten">
+                            <span class="link-grid__name">GitHub</span>
+                            <span class="link-grid__desc">hanyixuanten</span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+        </main>
+        <footer class="site-footer">
+            <p class="site-footer__text">
+                Copyright&nbsp;&copy;&nbsp;2025 -
+                <span data-current-year>2026</span><br />
+                All&nbsp;Rights&nbsp;Reserved
+            </p>
+            <ul class="site-footer__social-list" aria-label="联系方式">
+                <li class="site-footer__social-item">
+                    <a class="site-footer__social-link" target="_blank" rel="noopener noreferrer"
+                        href="http://wpa.qq.com/msgrd?v=3&amp;uin=1823773407&amp;site=qq&amp;menu=yes" aria-label="QQ">
+                        <img src="images/social/qq.svg" alt="QQ" width="30" height="30" decoding="async" />
+                    </a>
+                </li>
+                <li class="site-footer__social-item">
+                    <a class="site-footer__social-link" target="_blank" rel="noopener noreferrer"
+                        href="mailto:admin@vblg.top" aria-label="Mail">
+                        <img src="images/social/mail.svg" alt="Mail" width="30" height="30" decoding="async" />
+                    </a>
+                </li>
+                <li class="site-footer__social-item">
+                    <a class="site-footer__social-link" target="_blank" rel="noopener noreferrer"
+                        href="https://github.com/hanyixuanten" aria-label="Github">
+                        <img src="images/social/github.svg" alt="Github" width="30" height="30" decoding="async" />
+                    </a>
+                </li>
+                <li class="site-footer__social-item">
+                    <a class="site-footer__social-link" target="_blank" rel="noopener noreferrer"
+                        href="https://gitee.com/hanyixuanten" aria-label="Gitee">
+                        <img src="images/social/gitee.svg" alt="Gitee" width="30" height="30" decoding="async" />
+                    </a>
+                </li>
+            </ul>
+        </footer>
+    </div>
+    <script src="scripts/effects/sakura/config.js"></script>
+    <script src="scripts/effects/sakura/math.js"></script>
+    <script src="scripts/effects/sakura/shaders.js"></script>
+    <script src="scripts/effects/sakura/gl-utils.js"></script>
+    <script src="scripts/effects/sakura/renderer.js"></script>
+    <script src="scripts/app/bootstrap.js"></script>
+    <script src="scripts/app/hero-fold.js"></script>
+    <script src="scripts/app/page-snap.js"></script>
+</body>
 
-		<script src="scripts/effects/sakura/config.js"></script>
-		<script src="scripts/effects/sakura/math.js"></script>
-		<script src="scripts/effects/sakura/shaders.js"></script>
-		<script src="scripts/effects/sakura/gl-utils.js"></script>
-		<script src="scripts/effects/sakura/renderer.js"></script>
-		<script src="scripts/app/bootstrap.js"></script>
-		<script src="scripts/app/hero-fold.js"></script>
-		<script src="scripts/app/page-snap.js"></script>
-	</body>
 </html>

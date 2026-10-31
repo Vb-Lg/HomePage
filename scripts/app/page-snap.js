@@ -63,35 +63,73 @@
 		return document.querySelectorAll("[data-page]");
 	}
 
-	/* 翻到第 index 个分页（0 起）；-1 表示回到页面顶部 */
-	function scrollToPage(index) {
+	/*
+	停靠点 = 每个分页的顶端 + 文档底（页脚落在最后一屏里，通常与最后一页重合）。
+	统一换算成滚动位置再处理：最后一页的顶端一旦超出可滚动范围，浏览器会把它夹到
+	文档底，此时它和页脚是同一站，必须合并；否则滚轮会在原地空转一次，看起来像
+	「多出一段滚动」。
+	*/
+	function stopTops() {
 		var nodes = pageNodes();
+		var maxTop = Math.max(0, root.scrollHeight - window.innerHeight);
+		var scrollTop = getScrollTop();
+		var tops = [];
 
-		if (index < 0 || !nodes.length) {
-			window.scrollTo({ top: 0, behavior: isReducedMotion() ? "auto" : "smooth" });
+		for (var i = 0; i < nodes.length; i++) {
+			var raw = nodes[i].getBoundingClientRect().top + scrollTop;
+			var top = raw > maxTop ? maxTop : raw;
+
+			/* 和上一站相差不到 2px 就并成一站 */
+			if (!tops.length || top - tops[tops.length - 1] > 2) {
+				tops.push(top);
+			}
+		}
+
+		if (!tops.length || maxTop - tops[tops.length - 1] > 2) {
+			tops.push(maxTop);
+		}
+
+		return tops;
+	}
+
+	function scrollToTop(top) {
+		window.scrollTo({ top: top, behavior: isReducedMotion() ? "auto" : "smooth" });
+	}
+
+	/* 翻到第 index 站（0 起）；-1 表示回到页面顶部，越界则夹到最后一站 */
+	function scrollToStop(index) {
+		var tops = stopTops();
+
+		if (index < 0 || !tops.length) {
+			scrollToTop(0);
 			return;
 		}
 
-		if (index > nodes.length - 1) {
-			index = nodes.length - 1;
+		if (index > tops.length - 1) {
+			index = tops.length - 1;
 		}
 
-		nodes[index].scrollIntoView({ behavior: isReducedMotion() ? "auto" : "smooth", block: "start" });
+		scrollToTop(tops[index]);
 	}
 
-	function currentPageIndex() {
-		var nodes = pageNodes();
+	function currentStopIndex() {
+		var tops = stopTops();
 
-		/* 翻页动画途中：以目标页为基准继续翻，而不是半路的位置 */
-		if (targetIndex >= 0) {
-			return targetIndex;
+		if (!tops.length) {
+			return -1;
 		}
 
-		var best = -1;
+		/* 翻页动画途中：以目标站为基准继续翻，而不是半路的位置 */
+		if (targetIndex >= 0) {
+			return targetIndex > tops.length - 1 ? tops.length - 1 : targetIndex;
+		}
+
+		var scrollTop = getScrollTop();
+		var best = 0;
 		var bestDistance = Infinity;
 
-		for (var i = 0; i < nodes.length; i++) {
-			var distance = Math.abs(nodes[i].getBoundingClientRect().top);
+		for (var i = 0; i < tops.length; i++) {
+			var distance = Math.abs(tops[i] - scrollTop);
 
 			if (distance < bestDistance) {
 				bestDistance = distance;
@@ -103,9 +141,10 @@
 	}
 
 	function go(direction) {
-		var index = currentPageIndex();
+		var tops = stopTops();
+		var index = currentStopIndex();
 
-		if (index < 0) {
+		if (index < 0 || !tops.length) {
 			return;
 		}
 
@@ -113,14 +152,19 @@
 
 		if (next < 0) {
 			targetIndex = -1;
-			scrollToPage(-1);
+			scrollToStop(-1);
 			return;
 		}
 
-		targetIndex = next;
-		scrollToPage(next);
+		/* 已经在最后一站（文档底）就不再往下走 */
+		if (next > tops.length - 1) {
+			next = tops.length - 1;
+		}
 
-		/* scrollIntoView 结束后清掉锁定，下一次翻页以实际位置为准 */
+		targetIndex = next;
+		scrollToStop(next);
+
+		/* 滚动结束后清掉锁定，下一次翻页以实际位置为准 */
 		window.setTimeout(function () {
 			targetIndex = -1;
 		}, 700);
@@ -178,10 +222,11 @@
 				go(-1);
 				break;
 			case "Home":
-				scrollToPage(-1);
+				scrollToStop(-1);
 				break;
 			case "End":
-				scrollToPage(pageNodes().length - 1);
+				/* End 直接落到最后一站（文档底，页脚就在这一屏里） */
+				scrollToStop(stopTops().length - 1);
 				break;
 			default:
 				handled = false;
